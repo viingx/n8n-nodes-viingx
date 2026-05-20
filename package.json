@@ -1,11 +1,16 @@
 {
   "name": "n8n-nodes-viingx",
-  "version": "0.1.3",
+  "version": "1.0.0",
   "description": "Interface to viingx systems",
   "license": "MIT",
   "homepage": "",
-  "keywords": ["n8n-community-node-package"],
-  "author": { "name": "Robert Motzke", "email": "rm@viingx.com" },
+  "keywords": [
+    "n8n-community-node-package"
+  ],
+  "author": {
+    "name": "Robert Motzke",
+    "email": "rm@viingx.com"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/viingx/n8n-nodes-viingx.git"
@@ -19,11 +24,15 @@
     "release": "n8n-node release",
     "prepublishOnly": "n8n-node prerelease"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "n8n": {
     "n8nNodesApiVersion": 1,
     "strict": true,
-    "credentials": ["dist/credentials/ViingxApi.credentials.js"],
+    "credentials": [
+      "dist/credentials/ViingxApi.credentials.js"
+    ],
     "nodes": [
       "dist/nodes/Viingx/Viingx.node.js",
       "dist/nodes/Viingx/ViingxTrigger.node.js"
@@ -36,5 +45,7 @@
     "release-it": "^19.0.4",
     "typescript": "5.9.2"
   },
-  "peerDependencies": { "n8n-workflow": "*" }
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  }
 }
