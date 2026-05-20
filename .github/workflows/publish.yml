@@ -80,7 +80,21 @@ jobs:
 
       - name: Publish to npm
         run: |
-          npm publish --provenance --access public --loglevel verbose
+          set +e
+          npm publish --provenance --access public --loglevel verbose > publish.log 2>&1
+          STATUS=$?
+          set -e
+
+          {
+            echo "### npm publish output"
+            echo
+            echo '```text'
+            sed -E 's/npm_[[:alnum:]_-]+/[npm-token-redacted]/g' publish.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          cat publish.log
+          exit "$STATUS"
         env:
           RELEASE_MODE: true
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
