@@ -2,7 +2,7 @@
 
 This is an n8n community node. It lets you connect n8n workflows to viingx systems.
 
-viingx is used to work with structured entity data, files, authorization profiles, and webhook-driven events exposed by a viingx installation.
+viingx is used to work with structured entity data, files, localizations, workflows, authorization profiles, and webhook-driven events exposed by a viingx installation.
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/) workflow automation platform.
 
@@ -12,12 +12,21 @@ viingx is used to work with structured entity data, files, authorization profile
     - [viingx](#viingx)
       - [Authorization](#authorization)
       - [Entity](#entity)
+      - [Entity Localization](#entity-localization)
+      - [Entity Type](#entity-type)
+      - [GraphQL](#graphql)
+      - [Locale](#locale)
+      - [Response](#response)
+      - [Setting](#setting)
+      - [Share Link](#share-link)
+      - [Workflow](#workflow)
     - [viingx Trigger](#viingx-trigger)
   - [Credentials](#credentials)
   - [Compatibility](#compatibility)
   - [Usage](#usage)
     - [Working With Entities](#working-with-entities)
     - [Working With Files](#working-with-files)
+    - [Working With Localizations](#working-with-localizations)
     - [Trigger Webhooks](#trigger-webhooks)
     - [Trigger Responses](#trigger-responses)
   - [Resources](#resources)
@@ -41,27 +50,91 @@ The `viingx` node supports these resources and operations:
 
 #### Authorization
 
-- Read User Profile: Read the profile of the currently authenticated user.
-- List User Profiles: List available user profiles.
+- Create Signed URLs: Create signed URLs for file access.
+- Get User Profile: Get the profile of the currently authenticated user.
+- Get User Profiles: Get all available user profiles.
 
 #### Entity
 
 - Create Entity: Create a new entity for a selected entity type and content locale.
+- Create Media Entity From File Data: Create a new media entity from incoming binary file data.
 - Delete Entity: Delete an entity by type, ID, and entity version.
-- List Entities: List entities of a selected type, with optional query, sorting, and limit parameters.
-- List Entity Types: List all available entity types.
-- Patch Entity: Partially update an entity by ID.
-- Read Entity: Read a single entity by type and ID.
-- Read Entity File: Download an entity file to an n8n binary property.
-- Read Entity Type: Read metadata for a single entity type.
-- Update Entity: Update an existing entity by ID.
+- Export Layout Entity: Export a layout entity.
+- Get Entities: List entities of a selected type, with optional query, sorting, and limit parameters.
+- Get Entity: Read a single entity by type and ID.
+- Get Entity Derivative File: Download a derivative file for an entity to an n8n binary property.
+- Get Entity File: Download the primary file for an entity to an n8n binary property.
+- Get Entity File Derivatives: List available file derivatives for an entity.
+- Get Entity File Metadata: Read metadata for an entity's primary file.
+- Get Entity History: Read the revision history for an entity.
+- Get Entity Preview File: Download the preview file for an entity to an n8n binary property.
+- Get Layout Entity Export Info: Read export information for a layout entity.
+- Get Media Entity Cropped File: Download a cropped version of a media entity's file.
+- Patch Entity: Partially update an entity by sending only the fields that should change.
+- Suggest Media Entity Payload From Entity File: Suggest a media entity payload derived from an existing entity file.
+- Suggest Media Entity Payload From File Data: Suggest a media entity payload from incoming binary file data.
+- Update Entity: Replace an existing entity's content.
+- Update Media Entity From File Data: Replace a media entity's file from incoming binary file data.
 - Upload File: Upload an incoming binary file to viingx.
+
+#### Entity Localization
+
+- Create or Update Entity Localization: Create or replace a localization for an entity.
+- Delete Entity Localization: Delete a localization for an entity.
+- Get Entity Localization: Read a single localization for an entity.
+- Get Entity Localization File: Download the file attached to an entity localization.
+- Get Entity Localization File Metadata: Read metadata for an entity localization file.
+- Get Entity Localizations: List all localizations for an entity.
+
+#### Entity Type
+
+- Create or Update Entity Type: Create or replace an entity type definition.
+- Delete Entity Type: Delete an entity type.
+- Get Entity Type: Read metadata for a single entity type.
+- Get Entity Type Version: Read a specific version of an entity type.
+- Get Entity Types: List all available entity types.
+
+#### GraphQL
+
+- Execute GraphQL: Execute a GraphQL query or mutation against the viingx API.
+
+#### Locale
+
+- Get Locale: Read a single locale by ID.
+- Get Locales: List all available locales.
+
+#### Response
+
+Use this resource at the end of workflows started by non-subscription triggers to send the expected response payload back to viingx.
+
+- Send Action Response: Send the result of an action invocation.
+- Send Quality Gate Check Response: Send a pass or fail result for a quality gate check.
+- Send Workflow Assignee Options Response: Send the list of allowed assignee user IDs.
+- Send Workflow State Options Response: Send the list of allowed workflow states.
+
+#### Setting
+
+- Get System Settings: Read the system-level settings for the viingx instance.
+- Get User Settings: Read the settings for the currently authenticated user.
+
+#### Share Link
+
+- Create Share Link: Create a share link for an entity.
+- Delete Share Link: Delete a share link.
+
+#### Workflow
+
+- Get Entity Workflow Comments: Read workflow comments for an entity.
+- My Assigned Entities: List entities assigned to the currently authenticated user.
+- Suggest Assignees: Get suggested workflow assignees for an entity.
+- Suggest States: Get suggested workflow states for an entity.
+- Update Entity Workflow: Update the workflow state or assignee for an entity.
 
 ### viingx Trigger
 
 The `viingx Trigger` node starts a workflow from viingx webhook calls.
 
-- Action: Receives action events at the node webhook URL.
+- Action: Receives action events at the node webhook URL. Supports synchronous and asynchronous completion modes.
 - Quality Gate Check: Receives quality gate check events at the node webhook URL.
 - Subscription: Receives subscription events at the node webhook URL.
 - Workflow Assignee Options: Receives workflow assignee option events at the node webhook URL.
@@ -94,7 +167,7 @@ For `Create Entity`, provide:
 - Content Locale
 - Payload JSON
 
-For `List Entities`, the optional `Query` and `Sorting` fields use JSON. Example query:
+For `Get Entities`, the optional `Query` and `Sorting` fields use JSON. Example query:
 
 ```json
 {
@@ -115,11 +188,17 @@ Example sorting:
 ]
 ```
 
+For media entities, use `Create Media Entity From File Data` or `Update Media Entity From File Data` when the incoming n8n item contains binary data. Use `Suggest Media Entity Payload From File Data` to pre-fill payload fields from the file before creating.
+
 ### Working With Files
 
 Use `Upload File` when the incoming n8n item contains binary data. Set `Input Binary Field` to the binary property name, for example `data`.
 
-Use `Read Entity File` to download a viingx file into an n8n binary property. Set `Output Binary Property` to the property name that should receive the file.
+Use `Get Entity File` to download a viingx file into an n8n binary property. Set `Output Binary Property` to the property name that should receive the file. The same pattern applies to `Get Entity Derivative File`, `Get Entity Preview File`, `Get Media Entity Cropped File`, and the entity localization file operations.
+
+### Working With Localizations
+
+Use `Get Entity Localizations` to list all locale variants of an entity. Use `Create or Update Entity Localization` to create or replace a locale-specific content version. Use `Get Entity Localization File` to download the file attached to a localization.
 
 ### Trigger Webhooks
 
@@ -147,4 +226,5 @@ For action responses, choose `Send Action Response`, then choose the response ty
 
 ## Version history
 
-- 0.1.3: Current package version. Provides viingx authorization, entity, file, and trigger webhook support.
+- 1.0.1: Current package version. CI publish workflow fix.
+- 1.0.0: Full release. Added entity localization, entity type management, GraphQL, locale, response, setting, share link, and workflow resources. Extended entity and authorization operations.
