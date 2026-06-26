@@ -1,16 +1,26 @@
 import type { INodeProperties } from 'n8n-workflow';
 import { createEntityDescription } from './createEntity';
+import { createMediaEntityFromFileDataDescription } from './createMediaEntityFromFileData';
 import { deleteEntityDescription } from './deleteEntity';
-import { listEntitiesDescription } from './listEntities';
-import { listEntityTypesDescription } from './listEntityTypes';
+import { exportLayoutEntityDescription } from './exportLayoutEntity';
+import { getEntitiesDescription } from './getEntities';
+import { getEntityDescription } from './getEntity';
+import { getEntityDerivativeFileDescription } from './getEntityDerivativeFile';
+import { getEntityFileDescription } from './getEntityFile';
+import { getEntityFileDerivativesDescription } from './getEntityFileDerivatives';
+import { getEntityFileMetadataDescription } from './getEntityFileMetadata';
+import { getEntityHistoryDescription } from './getEntityHistory';
+import { getEntityPreviewFileDescription } from './getEntityPreviewFile';
+import { getLayoutEntityExportInfoDescription } from './getLayoutEntityExportInfo';
+import { getMediaEntityCroppedFileDescription } from './getMediaEntityCroppedFile';
 import { patchEntityDescription } from './patchEntity';
-import { readEntityDescription } from './readEntity';
-import { readEntityFileDescription } from './readEntityFile';
-import { readEntityTypeDescription } from './readEntityType';
+import { suggestMediaEntityPayloadFromEntityFileDescription } from './suggestMediaEntityPayloadFromEntityFile';
+import { suggestMediaEntityPayloadFromFileDataDescription } from './suggestMediaEntityPayloadFromFileData';
 import { updateEntityDescription } from './updateEntity';
-import { prepareBinaryFileUpload, uploadFileDescription } from './uploadFile';
+import { updateMediaEntityFromFileDataDescription } from './updateMediaEntityFromFileData';
+import { uploadFileDescription } from './uploadFile';
 
-const showOnlyForIssues = {
+const showWhen = {
 	resource: ['entity'],
 };
 
@@ -21,159 +31,134 @@ export const entityDescription: INodeProperties[] = [
 		type: 'options',
 		noDataExpression: true,
 		displayOptions: {
-			show: showOnlyForIssues,
+			show: showWhen,
 		},
 		options: [
 			{
 				name: 'Create Entity',
 				value: 'createEntity',
 				action: 'Create entity',
-				description: 'Create a new entity',
-				routing: {
-					request: {
-						method: 'POST',
-						url: '=/types/{{$parameter.entityType}}/entities',
-					},
-				},
+			},
+			{
+				name: 'Create Media Entity From File Data',
+				value: 'createMediaEntityFromFileData',
+				action: 'Create media entity from file data',
 			},
 			{
 				name: 'Delete Entity',
 				value: 'deleteEntity',
 				action: 'Delete entity',
-				description: 'Delete an existing entity',
-				routing: {
-					request: {
-						method: 'DELETE',
-						url: '=/types/{{$parameter.entityType}}/entities/{{$parameter.entityId}}',
-						headers: {
-							'If-Match': '={{$parameter.entityVersion}}',
-						},
-					},
-				},
 			},
 			{
-				name: 'List Entities',
-				value: 'listEntities',
-				action: 'List entities',
-				description: 'List existing entities of a specific type',
-				routing: {
-					request: {
-						method: 'GET',
-						url: '=/types/{{$parameter.entityType}}/entities',
-					},
-				},
+				name: 'Export Layout Entity',
+				value: 'exportLayoutEntity',
+				action: 'Export layout entity',
 			},
 			{
-				name: 'List Entity Types',
-				value: 'listEntityTypes',
-				action: 'List entity types',
-				description: 'List all entity types',
-				routing: {
-					request: {
-						method: 'GET',
-						url: '=/types',
-					},
-				},
+				name: 'Get Entities',
+				value: 'getEntities',
+				action: 'Get entities',
+			},
+			{
+				name: 'Get Entity',
+				value: 'getEntity',
+				action: 'Get entity',
+			},
+			{
+				name: 'Get Entity Derivative File',
+				value: 'getEntityDerivativeFile',
+				action: 'Get entity derivative file',
+			},
+			{
+				name: 'Get Entity File',
+				value: 'getEntityFile',
+				action: 'Get entity file',
+			},
+			{
+				name: 'Get Entity File Derivatives',
+				value: 'getEntityFileDerivatives',
+				action: 'Get entity file derivatives',
+			},
+			{
+				name: 'Get Entity File Metadata',
+				value: 'getEntityFileMetadata',
+				action: 'Get entity file metadata',
+			},
+			{
+				name: 'Get Entity History',
+				value: 'getEntityHistory',
+				action: 'Get entity history',
+			},
+			{
+				name: 'Get Entity Preview File',
+				value: 'getEntityPreviewFile',
+				action: 'Get entity preview file',
+			},
+			{
+				name: 'Get Layout Entity Export Info',
+				value: 'getLayoutEntityExportInfo',
+				action: 'Get layout entity export info',
+			},
+			{
+				name: 'Get Media Entity Cropped File',
+				value: 'getMediaEntityCroppedFile',
+				action: 'Get media entity cropped file',
 			},
 			{
 				name: 'Patch Entity',
 				value: 'patchEntity',
 				action: 'Patch entity',
 				description: 'Update an existing entity by sending only the fields that should be updated. Fields that are not included in the request will not be modified.',
-				routing: {
-					request: {
-						method: 'PATCH',
-						url: '=/types/{{$parameter.entityType}}/entities/{{$parameter.entityId}}',
-					},
-				},
 			},
 			{
-				name: 'Read Entity',
-				value: 'readEntity',
-				action: 'Read entity',
-				description: 'Read the data of a single entity',
-				routing: {
-					request: {
-						method: 'GET',
-						url: '=/types/{{$parameter.entityType}}/entities/{{$parameter.entityId}}',
-					},
-				},
+				name: 'Suggest Media Entity Payload From Entity File',
+				value: 'suggestMediaEntityPayloadFromEntityFile',
+				action: 'Suggest media entity payload from entity file',
 			},
 			{
-				name: 'Read Entity File',
-				value: 'readEntityFile',
-				action: 'Read entity file',
-				description: 'Read the file of a single entity',
-				routing: {
-					request: {
-						method: 'GET',
-						url: '=/types/{{$parameter.entityType}}/entities/{{$parameter.entityId}}/files/{{$parameter.fileId}}',
-						encoding: 'arraybuffer',
-						json: false,
-					},
-					output: {
-						postReceive: [
-							{
-								type: 'binaryData',
-								properties: {
-									destinationProperty: '={{$parameter.binaryPropertyName}}',
-								},
-							},
-						],
-					},
-				},
-			},
-			{
-				name: 'Read Entity Type',
-				value: 'readEntityType',
-				action: 'Read entity type',
-				description: 'Read the data of a single entity type',
-				routing: {
-					request: {
-						method: 'GET',
-						url: '=/types/{{$parameter.entityType}}',
-					},
-				},
+				name: 'Suggest Media Entity Payload From File Data',
+				value: 'suggestMediaEntityPayloadFromFileData',
+				action: 'Suggest media entity payload from file data',
 			},
 			{
 				name: 'Update Entity',
 				value: 'updateEntity',
 				action: 'Update entity',
 				description: 'Update an existing entity',
-				routing: {
-					request: {
-						method: 'PUT',
-						url: '=/types/{{$parameter.entityType}}/entities/{{$parameter.entityId}}',
-					},
-				},
+			},
+			{
+				name: 'Update Media Entity From File Data',
+				value: 'updateMediaEntityFromFileData',
+				action: 'Update media entity from file data',
+				description: 'Update an existing media entity from file data',
 			},
 			{
 				name: 'Upload File',
 				value: 'uploadFile',
 				action: 'Upload file',
 				description: 'Upload a file',
-				routing: {
-					request: {
-						method: 'POST',
-						url: '=/files/upload',
-						json: false,
-					},
-					send: {
-						preSend: [prepareBinaryFileUpload],
-					},
-				},
 			},
 		],
-		default: 'readEntity',
+		default: 'getEntity',
 	},
 	...createEntityDescription,
+	...createMediaEntityFromFileDataDescription,
 	...deleteEntityDescription,
-	...listEntitiesDescription,
-	...listEntityTypesDescription,
+	...exportLayoutEntityDescription,
+	...getEntitiesDescription,
+	...getEntityDescription,
+	...getEntityDerivativeFileDescription,
+	...getEntityFileDescription,
+	...getEntityFileDerivativesDescription,
+	...getEntityFileMetadataDescription,
+	...getEntityHistoryDescription,
+	...getEntityPreviewFileDescription,
+	...getLayoutEntityExportInfoDescription,
+	...getMediaEntityCroppedFileDescription,
 	...patchEntityDescription,
-	...readEntityDescription,
-	...readEntityFileDescription,
-	...readEntityTypeDescription,
+	...suggestMediaEntityPayloadFromEntityFileDescription,
+	...suggestMediaEntityPayloadFromFileDataDescription,
 	...updateEntityDescription,
+	...updateMediaEntityFromFileDataDescription,
 	...uploadFileDescription,
 ];

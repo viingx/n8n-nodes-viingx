@@ -1,6 +1,6 @@
 import type { INodeProperties } from 'n8n-workflow';
 
-const showOnlyForCreateEntities = {
+const showWhen = {
 	operation: ['createEntity'],
 	resource: ['entity'],
 };
@@ -10,35 +10,29 @@ export const createEntityDescription: INodeProperties[] = [
         displayName: 'Entity Type Name or ID',
         name: 'entityType',
         type: 'options',
-        description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+        description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
         default: '',
         required: true,
         typeOptions: {
-            loadOptionsMethod: 'getEntityTypes',
+            loadOptionsMethod: 'getEntityTypeOptions',
         },
         displayOptions: {
-            show: showOnlyForCreateEntities,
+            show: showWhen,
         },
     },
     {
         displayName: 'Content Locale Name or ID',
         name: 'locale',
         type: 'options',
-        description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+        description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
         default: '',
         required: true,
         typeOptions: {
-            loadOptionsMethod: 'getAllEnabledLocales',
+            loadOptionsMethod: 'getLocaleOptions',
         },
         displayOptions: {
-            show: showOnlyForCreateEntities,
+            show: showWhen,
         },
-		routing: {
-			send: {
-				type: 'body',
-				property: 'content.localization.locale',
-			},
-		},
     },
     {
         displayName: 'Payload',
@@ -47,14 +41,7 @@ export const createEntityDescription: INodeProperties[] = [
         default: '{}',
         required: true,
         displayOptions: {
-            show: showOnlyForCreateEntities,
+            show: showWhen,
         },
-		routing: {
-			send: {
-				type: 'body',
-				property: 'content.payload',
-				value: "={{typeof $value === 'string' ? JSON.parse($value) : $value}}",
-			},
-		},
     },
 ];

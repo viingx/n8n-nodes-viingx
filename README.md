@@ -2,7 +2,7 @@
 
 This is an n8n community node. It lets you connect n8n workflows to viingx systems.
 
-viingx is used to work with structured entity data, files, authorization profiles, and webhook-driven action or subscription events exposed by a viingx installation.
+viingx is used to work with structured entity data, files, authorization profiles, and webhook-driven events exposed by a viingx installation.
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/) workflow automation platform.
 
@@ -19,6 +19,7 @@ viingx is used to work with structured entity data, files, authorization profile
     - [Working With Entities](#working-with-entities)
     - [Working With Files](#working-with-files)
     - [Trigger Webhooks](#trigger-webhooks)
+    - [Trigger Responses](#trigger-responses)
   - [Resources](#resources)
   - [Version history](#version-history)
 
@@ -61,7 +62,10 @@ The `viingx` node supports these resources and operations:
 The `viingx Trigger` node starts a workflow from viingx webhook calls.
 
 - Action: Receives action events at the node webhook URL.
+- Quality Gate Check: Receives quality gate check events at the node webhook URL.
 - Subscription: Receives subscription events at the node webhook URL.
+- Workflow Assignee Options: Receives workflow assignee option events at the node webhook URL.
+- Workflow State Options: Receives workflow state option events at the node webhook URL.
 
 ## Credentials
 
@@ -119,7 +123,21 @@ Use `Read Entity File` to download a viingx file into an n8n binary property. Se
 
 ### Trigger Webhooks
 
-Use `viingx Trigger` when viingx should start an n8n workflow. Choose `Action` or `Subscription`, then configure viingx to send a POST request to the webhook URL shown by n8n for that trigger node.
+Use `viingx Trigger` when viingx should start an n8n workflow. Choose the matching event type, then configure viingx to send a POST request to the webhook URL shown by n8n for that trigger node.
+
+For `Subscription`, the trigger responds immediately because it is notification-only. For `Action`, `Quality Gate Check`, `Workflow Assignee Options`, and `Workflow State Options`, connect the trigger workflow to the `viingx` node, choose the `Response` resource, and choose the matching operation.
+
+### Trigger Responses
+
+Use the `Response` resource in the `viingx` node at the end of workflows started by non-subscription triggers. Choose the operation that matches the trigger event so the node sends the expected response payload.
+
+For asynchronous action triggers, set `Action Completion` to `Asynchronous` in `viingx Trigger`. The trigger returns HTTP 204 automatically, while the workflow continues and can update or finalize the invocation later.
+
+For action responses, choose `Send Action Response`, then choose the response type:
+
+- `Send Synchronous Response`: Returns the final action result to the invocation request.
+- `Update Asynchronous Action Progress`: Sends progress to the invocation update endpoint using the invocation ID, token, and host URL from the trigger payload.
+- `Finalize Asynchronous Action`: Sends the final action result to the invocation finalize endpoint.
 
 ## Resources
 

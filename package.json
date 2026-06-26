@@ -35,7 +35,7 @@
     ],
     "nodes": [
       "dist/nodes/Viingx/Viingx.node.js",
-      "dist/nodes/Viingx/ViingxTrigger.node.js"
+      "dist/nodes/Viingx/triggers/ViingxTrigger/ViingxTrigger.node.js"
     ]
   },
   "devDependencies": {

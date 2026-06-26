@@ -1,6 +1,6 @@
 import type { INodeProperties } from 'n8n-workflow';
 
-const showOnlyForDeleteEntities = {
+const showWhen = {
 	operation: ['deleteEntity'],
 	resource: ['entity'],
 };
@@ -10,14 +10,14 @@ export const deleteEntityDescription: INodeProperties[] = [
         displayName: 'Entity Type Name or ID',
         name: 'entityType',
         type: 'options',
-        description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+        description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
         default: '',
         required: true,
         typeOptions: {
-            loadOptionsMethod: 'getEntityTypes',
+            loadOptionsMethod: 'getEntityTypeOptions',
         },
         displayOptions: {
-            show: showOnlyForDeleteEntities,
+            show: showWhen,
         },
     },
     {
@@ -27,7 +27,7 @@ export const deleteEntityDescription: INodeProperties[] = [
         default: '',
         required: true,
         displayOptions: {
-            show: showOnlyForDeleteEntities,
+            show: showWhen,
         },
     },
     {
@@ -37,7 +37,7 @@ export const deleteEntityDescription: INodeProperties[] = [
         default: 0,
         required: true,
         displayOptions: {
-            show: showOnlyForDeleteEntities,
+            show: showWhen,
         },
     },
 ];
