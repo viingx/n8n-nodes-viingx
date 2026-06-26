@@ -1,23 +1,23 @@
 import type { INodeProperties } from 'n8n-workflow';
 
-const showOnlyForListEntities = {
-	operation: ['listEntities'],
+const showWhen = {
+	operation: ['getEntities'],
 	resource: ['entity'],
 };
 
-export const listEntitiesDescription: INodeProperties[] = [
+export const getEntitiesDescription: INodeProperties[] = [
     {
         displayName: 'Entity Type Name or ID',
         name: 'entityType',
         type: 'options',
-        description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+        description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
         default: '',
         required: true,
         typeOptions: {
-            loadOptionsMethod: 'getEntityTypes',
+            loadOptionsMethod: 'getEntityTypeOptions',
         },
         displayOptions: {
-            show: showOnlyForListEntities,
+            show: showWhen,
         },
     },
     {
@@ -27,15 +27,8 @@ export const listEntitiesDescription: INodeProperties[] = [
         default: {},
         description: 'Definition of query parameters in JSON. Empty value returns all entities of given type. ”op“ values: “all|and|or|=|!=|&lt;|&lt;=|>|>=|text|exists|!exists”. Simple example:\n{"property": "content.payload.name", "op": "=", "value": "Test"}\nComplex example:\n{"op": "and", "operands": [{"op": "text", "like": "test"}, {"property": "workflow.payload.state", "op": "=", "value": "created"}]}\nFulltext example:\n{"op": "text", "like": "ab"}\nExists example:\n{"property": "workflow.payload.assignee", "op": "exists"}',
         displayOptions: {
-            show: showOnlyForListEntities,
+            show: showWhen,
         },
-		routing: {
-			send: {
-				type: 'query',
-				property: 'query',
-				value: "={{$value == '{}' ? '' : $value}}",
-			},
-		},
     },
     {
         displayName: 'Sorting',
@@ -47,15 +40,21 @@ export const listEntitiesDescription: INodeProperties[] = [
         default: {},
         description: 'Definiton of sorting in JSON. Multiple sortings are possible. Direction values: “asc|des”. Example:\n[{"property": "content.payload.name", "direction": "asc"}]',
         displayOptions: {
-            show: showOnlyForListEntities,
+            show: showWhen,
         },
-		routing: {
-			send: {
-				type: 'query',
-				property: 'sorting',
-				value: "={{$value == '{}' ? '' : $value}}",
-			},
-		},
+    },
+    {
+        displayName: 'Offset',
+        name: 'offset',
+        type: 'number',
+        typeOptions: {
+            minValue: 0,
+        },
+		description: 'Offset of results to return',
+        default: 0,
+        displayOptions: {
+            show: showWhen,
+        },
     },
     {
         displayName: 'Limit',
@@ -67,13 +66,34 @@ export const listEntitiesDescription: INodeProperties[] = [
 		description: 'Max number of results to return',
         default: 50,
         displayOptions: {
-            show: showOnlyForListEntities,
+            show: showWhen,
         },
-		routing: {
-			send: {
-				type: 'query',
-				property: 'limit',
-			},
-		},
+    },
+    {
+        displayName: 'Roots',
+        name: 'roots',
+        type: 'multiOptions',
+        options: [
+            {
+                name: 'Content',
+                value: 'content',
+            },
+            {
+                name: 'Preview',
+                value: 'preview',
+            },
+            {
+                name: 'Workflow',
+                value: 'workflow',
+            },
+            {
+                name: 'Quality Gates',
+                value: 'qualityGates',
+            },
+        ],
+        default: [],
+        displayOptions: {
+            show: showWhen,
+        },
     },
 ];

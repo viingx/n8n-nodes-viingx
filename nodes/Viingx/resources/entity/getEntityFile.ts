@@ -1,23 +1,23 @@
 import type { INodeProperties } from 'n8n-workflow';
 
-const showOnlyForReadEntity = {
-    operation: ['readEntityFile'],
+const showWhen = {
+    operation: ['getEntityFile'],
     resource: ['entity'],
 };
 
-export const readEntityFileDescription: INodeProperties[] = [
+export const getEntityFileDescription: INodeProperties[] = [
     {
         displayName: 'Entity Type Name or ID',
         name: 'entityType',
         type: 'options',
-        description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+        description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
         default: '',
         required: true,
         typeOptions: {
-            loadOptionsMethod: 'getEntityTypes',
+            loadOptionsMethod: 'getEntityTypeOptions',
         },
         displayOptions: {
-            show: showOnlyForReadEntity,
+            show: showWhen,
         },
     },
     {
@@ -27,7 +27,7 @@ export const readEntityFileDescription: INodeProperties[] = [
         default: '',
         required: true,
         displayOptions: {
-            show: showOnlyForReadEntity,
+            show: showWhen,
         },
     },
     {
@@ -36,7 +36,7 @@ export const readEntityFileDescription: INodeProperties[] = [
         type: 'number',
         default: 0,
         displayOptions: {
-            show: showOnlyForReadEntity,
+            show: showWhen,
         },
     },
     {
@@ -46,7 +46,7 @@ export const readEntityFileDescription: INodeProperties[] = [
         default: '',
         required: true,
         displayOptions: {
-            show: showOnlyForReadEntity,
+            show: showWhen,
         },
     },
     {
@@ -57,7 +57,7 @@ export const readEntityFileDescription: INodeProperties[] = [
         required: true,
         description: 'Name of the binary property to which to write the file',
         displayOptions: {
-            show: showOnlyForReadEntity,
+            show: showWhen,
         },
     },
 ];
